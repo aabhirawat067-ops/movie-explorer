@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import "./index.css";
 
-const API_BASE = "https://api.themoviedb.org/3";
+const API_BASE = "https://movie-backend-1-ldbb.onrender.com/api/movies";
 const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
-
-// TMDB API key from .env
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 const genres = [
   { id: "all", name: "All" },
@@ -18,6 +15,10 @@ const genres = [
 ];
 
 function App() {
+  // =========================
+  // STATE
+  // =========================
+
   const [movies, setMovies] = useState([]);
   const [trendingMovies, setTrendingMovies] = useState([]);
   const [popularMovies, setPopularMovies] = useState([]);
@@ -30,52 +31,59 @@ function App() {
   const [showFavorites, setShowFavorites] = useState(false);
 
   const [search, setSearch] = useState("");
+
   const [loading, setLoading] = useState(true);
   const [homeLoading, setHomeLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch home sections
+  // =========================
+  // FETCH HOME MOVIES
+  // =========================
+
   const fetchHomeMovies = async () => {
     try {
       setHomeLoading(true);
 
-      if (!API_KEY) {
-        throw new Error("TMDB API key is missing.");
-      }
-
       const requests = [
-        fetch(
-          `${API_BASE}/trending/movie/week?api_key=${API_KEY}&language=en-US`
-        ),
-        fetch(
-          `${API_BASE}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`
-        ),
-        fetch(
-          `${API_BASE}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1`
-        ),
+        fetch(`${API_BASE}/trending`),
+        fetch(`${API_BASE}/popular`),
+        fetch(`${API_BASE}/upcoming`),
       ];
 
-      const [trendingResponse, popularResponse, upcomingResponse] =
-        await Promise.all(requests);
+      const responses = await Promise.allSettled(requests);
 
+      // Trending
       if (
-        !trendingResponse.ok ||
-        !popularResponse.ok ||
-        !upcomingResponse.ok
+        responses[0].status === "fulfilled" &&
+        responses[0].value.ok
       ) {
-        throw new Error("Unable to load movie sections.");
+        const data = await responses[0].value.json();
+        setTrendingMovies(data.results || []);
+      } else {
+        setTrendingMovies([]);
       }
 
-      const [trendingData, popularData, upcomingData] =
-        await Promise.all([
-          trendingResponse.json(),
-          popularResponse.json(),
-          upcomingResponse.json(),
-        ]);
+      // Popular
+      if (
+        responses[1].status === "fulfilled" &&
+        responses[1].value.ok
+      ) {
+        const data = await responses[1].value.json();
+        setPopularMovies(data.results || []);
+      } else {
+        setPopularMovies([]);
+      }
 
-      setTrendingMovies(trendingData.results || []);
-      setPopularMovies(popularData.results || []);
-      setUpcomingMovies(upcomingData.results || []);
+      // Upcoming
+      if (
+        responses[2].status === "fulfilled" &&
+        responses[2].value.ok
+      ) {
+        const data = await responses[2].value.json();
+        setUpcomingMovies(data.results || []);
+      } else {
+        setUpcomingMovies([]);
+      }
     } catch (err) {
       console.error("Home movies error:", err);
     } finally {
@@ -83,42 +91,35 @@ function App() {
     }
   };
 
-  // Fetch movies for search / main section
+  // =========================
+  // FETCH MOVIES / SEARCH
+  // =========================
+
   const fetchMovies = async (query = "") => {
     try {
       setLoading(true);
       setError("");
 
-      if (!API_KEY) {
-        throw new Error("TMDB API key is missing.");
-      }
-
       let endpoint;
 
       if (query.trim()) {
-        endpoint =
-          `${API_BASE}/search/movie` +
-          `?api_key=${API_KEY}` +
-          `&query=${encodeURIComponent(query)}` +
-          `&include_adult=false` +
-          `&language=en-US` +
-          `&page=1`;
+        endpoint = `${API_BASE}/search?query=${encodeURIComponent(
+          query
+        )}`;
       } else {
-        endpoint =
-          `${API_BASE}/movie/popular` +
-          `?api_key=${API_KEY}` +
-          `&language=en-US` +
-          `&page=1`;
+        endpoint = `${API_BASE}/popular`;
       }
 
       const response = await fetch(endpoint);
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await response
+          .json()
+          .catch(() => ({}));
 
         throw new Error(
-          errorData.status_message ||
-            `TMDB request failed (${response.status})`
+          errorData.error ||
+            `Movie request failed (${response.status})`
         );
       }
 
@@ -126,7 +127,7 @@ function App() {
 
       setMovies(data.results || []);
     } catch (err) {
-      console.error("TMDB Error:", err);
+      console.error("Movie API Error:", err);
 
       setMovies([]);
       setError(err.message || "Unable to load movies.");
@@ -135,17 +136,22 @@ function App() {
     }
   };
 
-  // Load home sections when app starts
+  // =========================
+  // INITIAL LOAD
+  // =========================
+
   useEffect(() => {
     fetchHomeMovies();
   }, []);
 
-  // Load popular movies for main area
   useEffect(() => {
     fetchMovies();
   }, []);
 
-  // Search movies with delay
+  // =========================
+  // SEARCH WITH DELAY
+  // =========================
+
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchMovies(search);
@@ -154,7 +160,10 @@ function App() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Toggle favorite
+  // =========================
+  // FAVORITES
+  // =========================
+
   const toggleFavorite = (movie) => {
     setFavorites((currentFavorites) => {
       const alreadyFavorite = currentFavorites.some(
@@ -171,19 +180,26 @@ function App() {
     });
   };
 
-  // Check favorite
   const isFavorite = (movieId) => {
-    return favorites.some((movie) => movie.id === movieId);
+    return favorites.some(
+      (movie) => movie.id === movieId
+    );
   };
 
-  // Get year
+  // =========================
+  // GET YEAR
+  // =========================
+
   const getYear = (date) => {
     if (!date) return "N/A";
 
     return new Date(date).getFullYear();
   };
 
-  // Filter movies
+  // =========================
+  // FILTER MOVIES
+  // =========================
+
   const filteredMovies = movies.filter((movie) => {
     const genreMatch =
       activeGenre === "all" ||
@@ -191,14 +207,19 @@ function App() {
 
     const favoriteMatch =
       !showFavorites ||
-      favorites.some((favorite) => favorite.id === movie.id);
+      favorites.some(
+        (favorite) => favorite.id === movie.id
+      );
 
     return genreMatch && favoriteMatch;
   });
 
-  // Movie card used by all sections
+  // =========================
+  // MOVIE CARD
+  // =========================
+
   const MovieCard = ({ movie }) => (
-    <article className="movie-card" key={movie.id}>
+    <article className="movie-card">
       <div
         className="poster-wrapper"
         onClick={() => setSelectedMovie(movie)}
@@ -235,7 +256,9 @@ function App() {
       </div>
 
       <div className="movie-info">
-        <h3 title={movie.title}>{movie.title}</h3>
+        <h3 title={movie.title}>
+          {movie.title}
+        </h3>
 
         <div className="movie-meta">
           <span>
@@ -245,20 +268,32 @@ function App() {
               : "N/A"}
           </span>
 
-          <span>{getYear(movie.release_date)}</span>
+          <span>
+            {getYear(movie.release_date)}
+          </span>
         </div>
       </div>
     </article>
   );
 
-  // Home movie section
-  const MovieSection = ({ label, title, moviesList }) => {
+  // =========================
+  // HOME MOVIE SECTION
+  // =========================
+
+  const MovieSection = ({
+    label,
+    title,
+    moviesList,
+  }) => {
     if (homeLoading) {
       return (
         <section className="movie-category">
           <div className="section-heading">
             <div>
-              <p className="section-label">{label}</p>
+              <p className="section-label">
+                {label}
+              </p>
+
               <h2>{title}</h2>
             </div>
           </div>
@@ -271,13 +306,18 @@ function App() {
       );
     }
 
-    if (!moviesList.length) return null;
+    if (!moviesList.length) {
+      return null;
+    }
 
     return (
       <section className="movie-category">
         <div className="section-heading">
           <div>
-            <p className="section-label">{label}</p>
+            <p className="section-label">
+              {label}
+            </p>
+
             <h2>{title}</h2>
           </div>
 
@@ -287,13 +327,22 @@ function App() {
         </div>
 
         <div className="movie-grid category-grid">
-          {moviesList.slice(0, 10).map((movie) => (
-            <MovieCard movie={movie} key={movie.id} />
-          ))}
+          {moviesList
+            .slice(0, 10)
+            .map((movie) => (
+              <MovieCard
+                movie={movie}
+                key={movie.id}
+              />
+            ))}
         </div>
       </section>
     );
   };
+
+  // =========================
+  // UI
+  // =========================
 
   return (
     <div className="app">
@@ -308,7 +357,9 @@ function App() {
           className={`favorite-btn ${
             showFavorites ? "active" : ""
           }`}
-          onClick={() => setShowFavorites(!showFavorites)}
+          onClick={() =>
+            setShowFavorites(!showFavorites)
+          }
         >
           ❤️ Favorites ({favorites.length})
         </button>
@@ -317,6 +368,7 @@ function App() {
       {/* HERO */}
       <section className="hero">
         <div className="hero-content">
+
           <p className="hero-tag">
             DISCOVER YOUR NEXT FAVORITE
           </p>
@@ -327,8 +379,8 @@ function App() {
           </h1>
 
           <p className="hero-description">
-            Search thousands of movies, discover new favorites
-            and explore what's popular right now.
+            Search thousands of movies, discover new
+            favorites and explore what's popular right now.
           </p>
 
           {/* SEARCH */}
@@ -353,6 +405,7 @@ function App() {
               </button>
             )}
           </div>
+
         </div>
       </section>
 
@@ -384,25 +437,32 @@ function App() {
       {/* GENRES */}
       <section className="filters">
         <div className="genre-list">
+
           {genres.map((genre) => (
             <button
               key={genre.id}
               className={`genre ${
-                activeGenre === genre.id ? "active" : ""
+                activeGenre === genre.id
+                  ? "active"
+                  : ""
               }`}
-              onClick={() => setActiveGenre(genre.id)}
+              onClick={() =>
+                setActiveGenre(genre.id)
+              }
             >
               {genre.name}
             </button>
           ))}
+
         </div>
       </section>
 
-      {/* MAIN MOVIES / SEARCH / FAVORITES */}
+      {/* MAIN MOVIES */}
       <main className="movies-section">
 
         <div className="section-heading">
           <div>
+
             <p className="section-label">
               {showFavorites
                 ? "YOUR COLLECTION"
@@ -418,6 +478,7 @@ function App() {
                 ? `Search results for "${search}"`
                 : "Browse Movies"}
             </h2>
+
           </div>
 
           <span className="movie-count">
@@ -428,27 +489,43 @@ function App() {
         {/* LOADING */}
         {loading && (
           <div className="status">
+
             <div className="loader"></div>
-            <h3>Loading movies...</h3>
-            <p>Fetching movies from TMDB</p>
+
+            <h3>
+              Loading movies...
+            </h3>
+
+            <p>
+              Fetching movies from TMDB
+            </p>
+
           </div>
         )}
 
         {/* ERROR */}
         {!loading && error && (
           <div className="status error">
-            <div className="error-icon">⚠️</div>
 
-            <h3>Unable to load movies</h3>
+            <div className="error-icon">
+              ⚠️
+            </div>
+
+            <h3>
+              Unable to load movies
+            </h3>
 
             <p>{error}</p>
 
             <button
               className="retry-btn"
-              onClick={() => fetchMovies(search)}
+              onClick={() =>
+                fetchMovies(search)
+              }
             >
               Try Again
             </button>
+
           </div>
         )}
 
@@ -457,15 +534,21 @@ function App() {
           !error &&
           filteredMovies.length === 0 && (
             <div className="status">
-              <div className="empty-icon">🎬</div>
 
-              <h3>No movies found</h3>
+              <div className="empty-icon">
+                🎬
+              </div>
+
+              <h3>
+                No movies found
+              </h3>
 
               <p>
                 {showFavorites
                   ? "You haven't added any favorites yet."
                   : "Try another search or genre."}
               </p>
+
             </div>
           )}
 
@@ -474,25 +557,35 @@ function App() {
           !error &&
           filteredMovies.length > 0 && (
             <div className="movie-grid">
+
               {filteredMovies.map((movie) => (
-                <MovieCard movie={movie} key={movie.id} />
+                <MovieCard
+                  movie={movie}
+                  key={movie.id}
+                />
               ))}
+
             </div>
           )}
+
       </main>
 
       {/* MOVIE DETAILS MODAL */}
       {selectedMovie && (
         <div
           className="modal-backdrop"
-          onClick={() => setSelectedMovie(null)}
+          onClick={() =>
+            setSelectedMovie(null)
+          }
         >
+
           <div
             className="modal"
             onClick={(event) =>
               event.stopPropagation()
             }
           >
+
             <button
               className="modal-close"
               onClick={() =>
@@ -504,6 +597,7 @@ function App() {
 
             {/* MODAL POSTER */}
             <div className="modal-poster">
+
               {selectedMovie.poster_path ? (
                 <img
                   src={`${IMAGE_BASE}${selectedMovie.poster_path}`}
@@ -514,17 +608,22 @@ function App() {
                   🎬
                 </div>
               )}
+
             </div>
 
             {/* MODAL CONTENT */}
             <div className="modal-content">
+
               <p className="modal-label">
                 MOVIE DETAILS
               </p>
 
-              <h2>{selectedMovie.title}</h2>
+              <h2>
+                {selectedMovie.title}
+              </h2>
 
               <div className="modal-meta">
+
                 <span>
                   ⭐{" "}
                   {selectedMovie.vote_average
@@ -543,6 +642,7 @@ function App() {
                     ? "18+"
                     : "PG"}
                 </span>
+
               </div>
 
               <p className="overview">
@@ -560,29 +660,35 @@ function App() {
                   ? "❤️ Remove from Favorites"
                   : "🤍 Add to Favorites"}
               </button>
+
             </div>
+
           </div>
+
         </div>
       )}
 
       {/* FOOTER */}
       <footer>
+
         <div className="footer-logo">
           🎬 MovieExplorer
         </div>
 
-        <p>Discover. Watch. Enjoy.</p>
+        <p>
+          Discover. Watch. Enjoy.
+        </p>
 
         <small>
-          This product uses the TMDB API but is not endorsed
-          or certified by TMDB.
+          This product uses the TMDB API but is not
+          endorsed or certified by TMDB.
         </small>
 
         <small>
           Made by{" "}
           <strong>Abhishek Rawat</strong>
-         
         </small>
+
       </footer>
 
     </div>

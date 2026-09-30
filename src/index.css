@@ -674,3 +674,311 @@ footer small:last-child strong {
   -webkit-text-fill-color: transparent;
   font-weight: 800;
 }
+/* =================================
+   CURRENT MOVIE EXPLORER UI FIX
+================================= */
+
+.header {
+  min-height: 74px;
+  padding: 0 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(8, 9, 13, 0.88);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid #20222b;
+}
+
+.home-sections {
+  width: 100%;
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.section-label {
+  margin-bottom: 7px;
+  color: #9b6cff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.section-heading h2 {
+  font-size: 28px;
+}
+
+.movie-count {
+  color: #777d89;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.movies-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 55px 5% 100px;
+}
+
+.poster-wrapper {
+  height: 390px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+  background: #171920;
+  cursor: pointer;
+}
+
+.poster-wrapper img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.poster-wrapper:hover .poster-overlay {
+  opacity: 1;
+}
+
+.poster-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.52);
+  transition: 0.25s;
+}
+
+.poster-overlay span {
+  padding: 10px 15px;
+  border-radius: 9px;
+  color: white;
+  background: #7c3aed;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.movie-info h3 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.movie-meta {
+  display: flex;
+  gap: 12px;
+  color: #777d89;
+  font-size: 11px;
+}
+
+/* STATUS */
+
+.status {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #777d89;
+  padding: 40px 20px;
+}
+
+.status h3 {
+  margin: 12px 0 6px;
+  color: white;
+}
+
+.status p {
+  color: #777d89;
+}
+
+.loader {
+  width: 38px;
+  height: 38px;
+  border: 3px solid #292c35;
+  border-top-color: #8b5cf6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-icon,
+.empty-icon {
+  font-size: 45px;
+  margin-bottom: 10px;
+}
+
+.retry-btn {
+  margin-top: 15px;
+  padding: 10px 17px;
+  border: none;
+  border-radius: 9px;
+  color: white;
+  background: #7c3aed;
+}
+
+/* MODAL - CURRENT JSX */
+
+.modal-poster {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.modal-poster img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.modal-content {
+  flex: 1;
+  padding: 45px 35px;
+  overflow-y: auto;
+}
+
+.modal-label {
+  color: #a78bfa;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.modal-content h2 {
+  margin: 12px 0;
+  font-size: 34px;
+}
+
+.modal-content .overview {
+  color: #9296a3;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 5;
+  width: 35px;
+  height: 35px;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.modal-favorite {
+  margin-top: 25px;
+  padding: 11px 17px;
+  border: none;
+  border-radius: 9px;
+  color: white;
+  background: #7c3aed;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .header {
+    padding: 0 16px;
+  }
+
+  .favorite-btn {
+    margin-top: 0;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .hero {
+    padding: 55px 20px 45px;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+  }
+
+  .movies-section {
+    padding: 40px 20px 70px;
+  }
+
+  .section-heading h2 {
+    font-size: 22px;
+  }
+
+  .movie-count {
+    display: none;
+  }
+
+  .poster-wrapper {
+    height: 280px;
+  }
+
+  .modal-backdrop {
+    padding: 12px;
+  }
+
+  .modal {
+    width: 100%;
+    max-height: 92vh;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .modal-poster {
+    width: 100%;
+    height: 300px;
+  }
+
+  .modal-poster img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+  }
+
+  .modal-content {
+    padding: 25px 20px 30px;
+  }
+
+  .modal-content h2 {
+    font-size: 25px;
+    padding-right: 35px;
+  }
+}
+
+@media (max-width: 430px) {
+  .poster-wrapper {
+    height: 245px;
+  }
+
+  .movie-info {
+    padding: 10px 2px;
+  }
+
+  .movie-info h3 {
+    font-size: 13px;
+  }
+
+  .movie-meta {
+    font-size: 10px;
+  }
+
+  .modal-poster,
+  .modal-poster img {
+    height: 270px;
+  }
+}
