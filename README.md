@@ -1,72 +1,34 @@
 # 🎬 Movie Explorer
 
-<p align="center">
-  <strong>Discover. Search. Explore. Save your favorite movies.</strong>
-</p>
+A modern full-stack movie discovery web application built with **React, Vite, Node.js, Express, and TMDB API**.
 
-<p align="center">
-  A modern full-stack movie discovery platform built with React, Vite, Node.js and Express.
-</p>
+Explore trending, popular, and upcoming movies, search for movies, filter by genre, view detailed information, and save your favorite movies.
 
-<p align="center">
-  <a href="https://aabhirawat067-ops.github.io/movie-explorer/">
-    🌐 Live Demo
-  </a>
-  &nbsp;&nbsp;•&nbsp;&nbsp;
-  <a href="https://github.com/aabhirawat067-ops/Movie-backend-">
-    💻 Source Code
-  </a>
-  &nbsp;&nbsp;•&nbsp;&nbsp;
-  <a href="https://github.com/aabhirawat067-ops/movie-backend">
-    ⚙️ Backend
-  </a>
-</p>
+## 🚀 Live Demo
+
+🔗 **[Live Demo](https://aabhirawat067-ops.github.io/movie-explorer/)**
+
+## 🔗 Project Links
+
+* **Frontend:** [GitHub Repository](https://github.com/aabhirawat067-ops/movie-explorer)
+* **Backend:** [GitHub Repository](https://github.com/aabhirawat067-ops/Movie-backend-)
+
 
 ---
 
-## ✨ Overview
+## ✨ Features
 
-**Movie Explorer** is a responsive full-stack movie discovery application that allows users to explore trending, popular and upcoming movies, search for movies, filter them by genre and view detailed movie information.
-
-The application uses a **React + Vite frontend** with a dedicated **Node.js + Express backend**. Movie data is powered by the **TMDB API**.
-
-The backend works as a secure API layer between the frontend and TMDB, keeping the TMDB API key away from the frontend code.
-
----
-
-## 🚀 Features
-
-### 🎥 Movie Discovery
-
-* 🔥 Trending movies
-* ⭐ Popular movies
+* 🎬 Trending movies
+* 🔥 Popular movies
 * 📅 Upcoming movies
-* 🎬 Movie details
-* ⭐ Movie ratings
-* 📆 Release years
-* 🖼️ Movie poster previews
-
-### 🔎 Search & Filtering
-
 * 🔍 Movie search
-* 🎭 Genre filtering
-* ⚡ Debounced search
-* 📱 Responsive search experience
-
-### ❤️ Favorites
-
-* Add movies to favorites
-* Remove movies from favorites
-* Favorites counter
-* Persistent favorite selection
-
-### 🎨 User Experience
-
-* 📱 Mobile responsive design
-* 💻 Desktop optimized interface
-* ⏳ Loading states
-* ⚠️ Error handling
-* 🎯 Clean modern UI
+* 🎭 Genre-based filtering
+* ❤️ Add movies to favorites
+* 🎞️ Movie details
+* 📱 Responsive design
+* ⚡ Fast Vite development environment
+* 🔐 TMDB API key protected on the backend
+* 🌐 Separate frontend and backend architecture
 
 ---
 
@@ -74,99 +36,93 @@ The backend works as a secure API layer between the frontend and TMDB, keeping t
 
 ### Frontend
 
-<p>
-  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
-  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
-</p>
+* React
+* Vite
+* JavaScript
+* CSS
+* GitHub Pages
 
 ### Backend
 
-<p>
-  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" />
-  <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" />
-</p>
+* Node.js
+* Express.js
+* CORS
+* dotenv
 
-### API & Deployment
+### API
 
-<p>
-  <img src="https://img.shields.io/badge/TMDB-01B4E4?style=for-the-badge&logo=themoviedatabase&logoColor=white" />
-  <img src="https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=github&logoColor=white" />
-  <img src="https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=black" />
-  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" />
-  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" />
-</p>
+* TMDB API
+
+### Deployment
+
+* Frontend → GitHub Pages
+* Backend → Render
 
 ---
 
 ## 🏗️ Project Architecture
 
 ```text
-                    Movie Explorer
-                          │
-             ┌────────────┴────────────┐
-             │                         │
-             ▼                         ▼
-       React + Vite              Node.js + Express
-        Frontend                    Backend API
-             │                         │
-             │                         ▼
-             │                      TMDB API
-             │
-             └────────── API Requests ──────────►
-```
-
-### Deployment
-
-```text
+User
+  │
+  ▼
+React + Vite Frontend
+  │
+  │ API Requests
+  ▼
+Node.js + Express Backend
+  │
+  │ TMDB API Request
+  ▼
+TMDB API
+  │
+  ▼
+Movie Data
+  │
+  ▼
 Frontend
-   │
-   └── GitHub Pages
-
-Backend
-   │
-   └── Render
-
-Backend
-   │
-   └── TMDB API
 ```
+
+
+
+Instead, requests are sent to the Express backend, which communicates with TMDB and returns the movie data to the frontend.
 
 ---
 
-## 📁 Project Structure
+
+
+
+## 📂 Project Structure
 
 ### Frontend
 
 ```text
 movie-explorer/
-│
-├── public/
-├── src/
-│   ├── assets/
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── ...
-│
-├── .gitignore
-├── package.json
-├── package-lock.json
-└── vite.config.js
+└── temp-react/
+    ├── src/
+    │   ├── App.jsx
+    │   ├── main.jsx
+    │   └── ...
+    ├── public/
+    ├── package.json
+    ├── vite.config.js
+    └── ...
 ```
 
 ### Backend
 
-The backend is maintained in a separate repository:
-
 ```text
-movie-backend/
-│
-├── .gitignore
-├── package.json
-├── package-lock.json
+Movie-backend-/
 ├── server.js
-└── ...
+├── package.json
+├── .env
+├── .gitignore
+└── README.md
 ```
+
+
+
+
+
 
 
