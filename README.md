@@ -9,7 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://aabhirawat067-ops.github.io/movie-explorer/">
+  <a href="https://aabhirawat067-ops.github.io/movie-explorer/"
+  <a  
     🌐 Live Demo
   </a>
   &nbsp;&nbsp;•&nbsp;&nbsp;
