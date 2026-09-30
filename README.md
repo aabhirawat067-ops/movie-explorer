@@ -17,7 +17,7 @@
     💻 Source Code
   </a>
   &nbsp;&nbsp;•&nbsp;&nbsp;
-  <a href="https://github.com/aabhirawat067-ops/movie-backend">
+  <a href="https://github.com/aabhirawat067-ops/Movie-backend->
     ⚙️ Backend
   </a>
 </p>
