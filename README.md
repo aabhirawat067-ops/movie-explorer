@@ -9,8 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://aabhirawat067-ops.github.io/movie-explorer/"
-  <a  
+  <a href="https://aabhirawat067-ops.github.io/movie-explorer/">
     🌐 Live Demo
   </a>
   &nbsp;&nbsp;•&nbsp;&nbsp;
@@ -18,7 +17,7 @@
     💻 Source Code
   </a>
   &nbsp;&nbsp;•&nbsp;&nbsp;
-  <a href="https://github.com/aabhirawat067-ops/Movie-backend->
+  <a href="https://github.com/aabhirawat067-ops/movie-backend">
     ⚙️ Backend
   </a>
 </p>
@@ -31,7 +30,7 @@
 
 The application uses a **React + Vite frontend** with a dedicated **Node.js + Express backend**. Movie data is powered by the **TMDB API**.
 
-The backend works as a secure API layer between the frontend and TMDB.
+The backend works as a secure API layer between the frontend and TMDB, keeping the TMDB API key away from the frontend code.
 
 ---
 
@@ -146,5 +145,28 @@ movie-explorer/
 ├── public/
 ├── src/
 │   ├── assets/
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── ...
 │
+├── .gitignore
+├── package.json
+├── package-lock.json
+└── vite.config.js
 ```
+
+### Backend
+
+The backend is maintained in a separate repository:
+
+```text
+movie-backend/
+│
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── server.js
+└── ...
+```
+
+
